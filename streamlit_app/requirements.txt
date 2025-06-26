@@ -1,0 +1,5 @@
+streamlit
+newspaper3k
+readability-lxml
+beautifulsoup4
+lxml_html_clean
