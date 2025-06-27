@@ -2,11 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -21,17 +19,14 @@ jobs:
 
       - name: 🧰 Install Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
           docker-compose --version
 
       - name: 🔧 Build and Start Containers
         run: docker-compose up --build -d
 
-      - name: ✅ Run Health Check (optional)
+      - name: ✅ Run Backend Health Check
         run: |
+          sleep 10  # Wait for services to spin up
           curl --fail http://localhost:8000/docs || exit 1
-
-      # Optional: Run Python tests if you have them
-      # - name: 🧪 Run Backend Tests
-      #   run: docker exec <backend_container_name> pytest
