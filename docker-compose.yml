@@ -1,11 +1,16 @@
-version: '3.8'
-
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+    container_name: newsbias-backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-    environment:
-      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ./streamlit_app
+    container_name: newsbias-frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
