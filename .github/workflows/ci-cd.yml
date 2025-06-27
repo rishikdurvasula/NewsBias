@@ -2,31 +2,51 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: 🐳 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
 
-      - name: 🧰 Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-          docker-compose --version
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: 🔧 Build and Start Containers
-        run: docker-compose up --build -d
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
 
-      - name: ✅ Run Backend Health Check
-        run: |
-          sleep 10  # Wait for services to spin up
-          curl --fail http://localhost:8000/docs || exit 1
+    - name: Build and run docker-compose
+      run: docker-compose up -d --build
+
+    - name: Wait and test backend API
+      run: |
+        echo "⏳ Waiting for backend to become available..."
+        sleep 15
+        curl --retry 5 --retry-delay 5 --fail http://newsbias-backend:8000/docs
+
+    - name: Run backend container test
+      run: |
+        docker exec newsbias-backend python -c "print('✅ Backend is running and healthy')"
+
+    - name: Run frontend container test
+      run: |
+        docker exec newsbias-frontend python -c "print('✅ Frontend is running and healthy')"
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose down
