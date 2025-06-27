@@ -59,7 +59,7 @@ if st.button("Analyze"):
         with st.spinner("Summarizing and analyzing..."):
             try:
                 response = requests.post(
-                    "http://backend:8000/analyze",
+                    "http://127.0.0.1:8000/analyze", #"http://backend:8000/analyze"
                     json={"content": content, "source_url": url_input}
                 )
                 if response.status_code == 200:

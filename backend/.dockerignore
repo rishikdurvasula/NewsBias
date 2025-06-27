@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.safetensors
+*.pth
+*.pt
+*.ckpt
+backend/fine_tune_bias/results/
+transformers_cache/

@@ -1,1 +1,35 @@
 .cache/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+.env
+.env.*
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# System files
+.DS_Store
+
+# Model weights and cache
+*.safetensors
+*.pth
+*.pt
+*.ckpt
+backend/fine_tune_bias/results/
+transformers_cache/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Virtual envs
+newsbias-env/

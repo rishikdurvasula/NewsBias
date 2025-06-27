@@ -2,4 +2,5 @@ fastapi
 uvicorn
 transformers
 torch
-newspaper3k
+scikit-learn
+pandas
